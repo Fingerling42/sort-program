@@ -16,6 +16,11 @@ class GUI(tk.Frame):
         tk.Frame.__init__(self, parent)
         self.parent = parent
 
+        ## Name of program
+        self.parent.title('Simpsort.Music')
+        self.pack(fill="both", expand=True)
+
+
         ## Get list with all mp3 file in directory
         self.mp3List = glob.glob("*.mp3")
 
@@ -27,10 +32,6 @@ class GUI(tk.Frame):
         ## Init pointer to current  mp3 file 
         self.mp3NumList = 0
         self.mp3Name.set(self.mp3List[self.mp3NumList])
-
-        ## Name of program
-        self.parent.title('Simpsort.Music')
-        self.pack(fill="both", expand=True)
 
         self.center_window()
         self.track_edit()
@@ -48,11 +49,8 @@ class GUI(tk.Frame):
         ## Get current mp3 for eyed3
         self.audiofile = eyed3.load(self.mp3List[self.mp3NumList])
 
-        ## Check if tags exists
-        ## Otherwise itit tags
-        if hasattr(self.audiofile.tag, 'artist'):
-            pass
-        else:
+        ## Check if tags not exists itit tags
+        if hasattr(self.audiofile.tag, 'artist') == False or hasattr(self.audiofile, 'tag') == False:
             self.audiofile.initTag()
 
         ## Check if tag 'artist' not empty in mp3 file
@@ -73,8 +71,8 @@ class GUI(tk.Frame):
         """
         Method for centering window.
         """
-        width = 700
-        height = 500
+        width = 900
+        height = 600
 
         screenWidth = self.parent.winfo_screenwidth()
         screenHeight = self.parent.winfo_screenheight()
@@ -88,41 +86,78 @@ class GUI(tk.Frame):
         """
         Create all the widgets.
         """
+        self.columnconfigure(0, weight=2)
         self.columnconfigure(1, weight=1)
-        self.rowconfigure(6, weight=1)
+        self.columnconfigure(3, weight=1)
+        self.columnconfigure(2, weight=1)
+        self.columnconfigure(4, weight=1)
+        self.rowconfigure(8, weight=2)
+
+        ## Test lebel
+        labelTest = tk.Label(self, text="Genres (sometimes...)")
+        labelTest.grid(row=0, column=0, rowspan=10, sticky=W+S, pady=5, padx=5)
         
         ## Label and entry with mp3 file name
         labelName = tk.Label(self, text="MP3 file name: ")
-        labelName.grid(row=0, column=0, sticky=W, pady=5, padx=5)
+        labelName.grid(row=0, column=1, sticky=W, pady=5, padx=5)
 
         self.entryName = ttk.Entry(self, textvariable=self.mp3Name)
-        self.entryName.grid(row=1, column=0, columnspan=3, sticky=E+W+N, pady=5, padx=5)
+        self.entryName.grid(row=1, column=1, columnspan=4, sticky=W+E, pady=5, padx=5)
 
         ## Label and entry with track artist
         labelArtist = tk.Label(self, text="Artists of track: ")
-        labelArtist.grid(row=2, column=0, sticky=W, pady=5, padx=5)
+        labelArtist.grid(row=2, column=1, sticky=W, pady=5, padx=5)
 
         self.entryArtist = ttk.Entry(self, textvariable=self.trackArtist)
-        self.entryArtist.grid(row=3, column=0, columnspan=3, sticky=E+W+N, pady=5, padx=5)
+        self.entryArtist.grid(row=3, column=1, columnspan=4, sticky=W+E, pady=5, padx=5)
 
-        ## Label and entry with track title
+        ## Label with track title and album title
         labelTitle = tk.Label(self, text="Title of track: ")
-        labelTitle.grid(row=4, column=0, sticky=W, pady=5, padx=5)
+        labelTitle.grid(row=4, column=1, sticky=W, pady=5, padx=5)
 
+        labelAlbum = tk.Label(self, text="Title of album: ")
+        labelAlbum.grid(row=4, column=3, sticky=W, pady=5, padx=5)
+
+        ## Entry with track title and album title
         self.entryTitle = ttk.Entry(self, textvariable=self.trackTitle)
-        self.entryTitle.grid(row=5, column=0, columnspan=3, sticky=E+W+N, pady=5, padx=5)
+        self.entryTitle.grid(row=5, column=1, sticky=W+E, columnspan=2, pady=5, padx=5)
+
+        self.entryAlbum = ttk.Entry(self)
+        self.entryAlbum.grid(row=5, column=3, columnspan=2, sticky=W+E, pady=5, padx=5)
+
+        ## Label with year and genre
+        labelYear = tk.Label(self, text="Year of realise: ")
+        labelYear.grid(row=6, column=1, sticky=W, pady=5, padx=5)
+
+        labelGenre = tk.Label(self, text="Genre: ")
+        labelGenre.grid(row=6, column=3, sticky=W, pady=5, padx=5)
+
+        ## Entry with year and genre
+        self.entryYear = ttk.Entry(self)
+        self.entryYear.grid(row=7, column=1,  columnspan=2, sticky=W+E, pady=5, padx=5)
+
+        self.entryGenre = ttk.Entry(self)
+        self.entryGenre.grid(row=7, column=3, columnspan=2, sticky=W+E, pady=5, padx=5)
+
+        ## Play button
+        buttonPlay = ttk.Button(self, text="Play")
+        buttonPlay.grid(row=8, column=1, pady=5, padx=5, sticky=W+S)
 
         ## Previous track button
         buttonPrev = ttk.Button(self, text="Prev", command=self.prevMp3)
-        buttonPrev.grid(row=6, column=0, pady=5, padx=5, sticky=W+S)
+        buttonPrev.grid(row=9, column=1, pady=5, padx=5, sticky=W+S)
 
-        ## Applay changes button
+        ## Apply changes button
         buttonApply = ttk.Button(self, text="Apply", command=self.applyChanges)
-        buttonApply.grid(row=6, column=1, pady=5, padx=5, sticky=S)
+        buttonApply.grid(row=9, column=2, pady=5, padx=5, sticky=S)
+
+        ## Move track to final folder
+        buttonFinal = ttk.Button(self, text="Finalize")
+        buttonFinal.grid(row=9, column=3, pady=5, padx=5, sticky=S)
 
         ## Next track button
         buttonNext = ttk.Button(self, text="Next", command=self.nextMp3)
-        buttonNext.grid(row=6, column=2, pady=5, padx=5, sticky=E+S)
+        buttonNext.grid(row=9, column=4, pady=5, padx=5, sticky=E+S)
 
     def nextMp3(self, _event=None):
         """
