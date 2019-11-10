@@ -1,3 +1,6 @@
 *.mp3
 *.psd
 /desktop.ini
+/.idea/
+/for-test.py
+/test-sort.py
